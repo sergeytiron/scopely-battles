@@ -1,12 +1,11 @@
 using System.Net;
 using FastEndpoints;
-using FastEndpoints.Testing;
 using ScopelyBattles.Api.Players.Create;
 using ScopelyBattles.IntegrationTests.Fixtures;
 
 namespace ScopelyBattles.IntegrationTests.Players.Create;
 
-public sealed class EndpointTests(ApiFixture app) : TestBase<ApiFixture>
+public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
 {
     [Fact]
     public async Task PostPlayers_CreatesPlayer()
@@ -25,7 +24,7 @@ public sealed class EndpointTests(ApiFixture app) : TestBase<ApiFixture>
             Score = 500,
         };
 
-        var response = await app.Client.POSTAsync<Endpoint, Request, Response>(request);
+        var response = await App.Client.POSTAsync<Endpoint, Request, Response>(request);
 
         Assert.Equal(HttpStatusCode.Created, response.Response.StatusCode);
 
@@ -60,8 +59,8 @@ public sealed class EndpointTests(ApiFixture app) : TestBase<ApiFixture>
             Score = 500,
         };
 
-        await app.Client.POSTAsync<Endpoint, Request, Response>(request);
-        var response = await app.Client.POSTAsync<Endpoint, Request, Response>(request);
+        await App.Client.POSTAsync<Endpoint, Request, Response>(request);
+        var response = await App.Client.POSTAsync<Endpoint, Request, Response>(request);
 
         Assert.Equal(HttpStatusCode.Conflict, response.Response.StatusCode);
         Assert.NotNull(response.ErrorContent);

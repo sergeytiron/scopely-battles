@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ScopelyBattles.Shared.Leaderboard;
 using ScopelyBattles.Shared.Players;
 
 namespace ScopelyBattles.Shared.DataAccess;
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<PostgresConnectionFactory>();
         services.AddSingleton<PlayerStore>();
+        services.AddSingleton<LeaderboardStore>();
 
         return services;
     }

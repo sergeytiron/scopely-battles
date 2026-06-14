@@ -2,6 +2,7 @@ using FastEndpoints.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using Respawn;
 using ScopelyBattles.Shared.DataAccess;
 using Testcontainers.PostgreSql;
 
@@ -14,6 +15,8 @@ public sealed class ApiFixture : AppFixture<Program>
         .WithUsername("postgres")
         .WithPassword("postgres")
         .Build();
+
+    private Respawner? _respawner;
 
     public string ConnectionString => _postgresContainer.GetConnectionString();
 
@@ -48,6 +51,24 @@ public sealed class ApiFixture : AppFixture<Program>
             command.CommandText = sql;
             await command.ExecuteNonQueryAsync();
         }
+
+        _respawner = await Respawner.CreateAsync(
+            connection,
+            new RespawnerOptions { DbAdapter = DbAdapter.Postgres, SchemasToInclude = ["public"] }
+        );
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        if (_respawner is null)
+        {
+            throw new InvalidOperationException("Database reset cannot run before the API fixture is initialized.");
+        }
+
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync();
+
+        await _respawner.ResetAsync(connection);
     }
 
     protected override async ValueTask TearDownAsync()
