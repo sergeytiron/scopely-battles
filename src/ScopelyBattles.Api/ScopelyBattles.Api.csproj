@@ -4,6 +4,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ScopelyBattles.Shared\ScopelyBattles.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>

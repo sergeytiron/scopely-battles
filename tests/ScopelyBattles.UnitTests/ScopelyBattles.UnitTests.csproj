@@ -6,12 +6,13 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
-    <ProjectReference Include="..\..\src\ScopelyBattles.Shared\ScopelyBattles.Shared.csproj" />
+    <ProjectReference Include="..\..\src\ScopelyBattles.Api\ScopelyBattles.Api.csproj" />
+    <ProjectReference Include="..\..\src\ScopelyBattles.Worker\ScopelyBattles.Worker.csproj" />
   </ItemGroup>
 </Project>
