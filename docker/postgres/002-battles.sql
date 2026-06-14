@@ -3,10 +3,12 @@ CREATE TYPE battle_status AS ENUM ('queued', 'completed', 'failed');
 CREATE TABLE battles
 (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    idempotency_key uuid NOT NULL,
     attacker_id integer NOT NULL,
     defender_id integer NOT NULL,
     status battle_status NOT NULL DEFAULT 'queued',
     report jsonb,
+    CONSTRAINT uq_battles_idempotency_key UNIQUE (idempotency_key),
     CONSTRAINT fk_battles_attacker
         FOREIGN KEY (attacker_id)
         REFERENCES players (id),
