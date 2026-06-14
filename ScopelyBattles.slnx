@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ScopelyBattles.Api/ScopelyBattles.Api.csproj" />
+    <Project Path="src/ScopelyBattles.Shared/ScopelyBattles.Shared.csproj" />
+    <Project Path="src/ScopelyBattles.Worker/ScopelyBattles.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ScopelyBattles.IntegrationTests/ScopelyBattles.IntegrationTests.csproj" />
+    <Project Path="tests/ScopelyBattles.UnitTests/ScopelyBattles.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -9,7 +9,7 @@
 
 * `ScopelyBattles.Api` - HTTP API
 * `ScopelyBattles.Worker` - background battle processor
-* `ScopelyBattles.Common` - shared models and services
+* `ScopelyBattles.Shared` - shared models and services
 * `ScopelyBattles.UnitTests` - unit tests for battle logic and utilities
 * `ScopelyBattles.IntegrationTests` - integration tests with Docker dependencies
 
