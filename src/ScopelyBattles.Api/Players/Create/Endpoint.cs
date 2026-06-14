@@ -9,6 +9,17 @@ public sealed class Endpoint(PlayerStore playerStore) : Endpoint<Request, Respon
     {
         Post("/players");
         AllowAnonymous();
+        Description(b =>
+            b.Produces<Response>(StatusCodes.Status201Created)
+                .ProducesProblemFE(StatusCodes.Status409Conflict)
+                .ProducesProblemFE(StatusCodes.Status400BadRequest)
+        );
+        Summary(s =>
+        {
+            s.Responses[StatusCodes.Status201Created] = "Player created.";
+            s.Responses[StatusCodes.Status400BadRequest] = "Validation failed.";
+            s.Responses[StatusCodes.Status409Conflict] = "Player name already exists.";
+        });
     }
 
     public override async Task HandleAsync(Request request, CancellationToken cancellationToken)
