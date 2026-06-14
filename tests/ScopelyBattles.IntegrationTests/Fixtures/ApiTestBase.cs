@@ -1,5 +1,6 @@
 using FastEndpoints.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using ScopelyBattles.Api.Authentication;
 using ScopelyBattles.Shared.Players;
 
 namespace ScopelyBattles.IntegrationTests.Fixtures;
@@ -11,6 +12,8 @@ public abstract class ApiTestBase(ApiFixture app) : TestBase, IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
+        App.Client.DefaultRequestHeaders.Remove(ApiKeyAuthenticationHandler.HeaderName);
+        App.Client.DefaultRequestHeaders.Add(ApiKeyAuthenticationHandler.HeaderName, ApiFixture.ApiKey);
         await App.ResetDatabaseAsync();
     }
 

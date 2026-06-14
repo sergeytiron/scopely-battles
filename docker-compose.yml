@@ -6,6 +6,8 @@ services:
       dockerfile: src/ScopelyBattles.Api/Dockerfile
     ports:
       - "127.0.0.1:8080:8080"
+    environment:
+      Authentication__ApiKey: dev-api-key
 
   worker:
     image: scopelybattles-worker:latest

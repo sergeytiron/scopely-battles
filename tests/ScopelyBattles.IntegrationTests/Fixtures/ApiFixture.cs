@@ -1,8 +1,11 @@
 using FastEndpoints.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Respawn;
+using ScopelyBattles.Api.Authentication;
 using ScopelyBattles.Shared.DataAccess;
 using Testcontainers.PostgreSql;
 
@@ -10,6 +13,8 @@ namespace ScopelyBattles.IntegrationTests.Fixtures;
 
 public sealed class ApiFixture : AppFixture<Program>
 {
+    public const string ApiKey = "test-api-key";
+
     private readonly PostgreSqlContainer _postgresContainer = new PostgreSqlBuilder("postgres:18.4")
         .WithDatabase("scopelybattles_tests")
         .WithUsername("postgres")
@@ -19,6 +24,17 @@ public sealed class ApiFixture : AppFixture<Program>
     private Respawner? _respawner;
 
     public string ConnectionString => _postgresContainer.GetConnectionString();
+
+    protected override IHost ConfigureAppHost(IHostBuilder host)
+    {
+        host.ConfigureAppConfiguration(configuration =>
+            configuration.AddInMemoryCollection(
+                new Dictionary<string, string?> { [ApiKeyAuthenticationHandler.ConfigurationKey] = ApiKey }
+            )
+        );
+
+        return base.ConfigureAppHost(host);
+    }
 
     protected override async ValueTask PreSetupAsync()
     {

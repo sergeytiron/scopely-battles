@@ -8,9 +8,9 @@ public sealed class Endpoint(PlayerStore playerStore) : Endpoint<Request, Respon
     public override void Configure()
     {
         Post("/players");
-        AllowAnonymous();
         Description(b =>
             b.Produces<Response>(StatusCodes.Status201Created)
+                .ProducesProblemFE(StatusCodes.Status401Unauthorized)
                 .ProducesProblemFE(StatusCodes.Status409Conflict)
                 .ProducesProblemFE(StatusCodes.Status400BadRequest)
         );
@@ -18,6 +18,7 @@ public sealed class Endpoint(PlayerStore playerStore) : Endpoint<Request, Respon
         {
             s.Responses[StatusCodes.Status201Created] = "Player created.";
             s.Responses[StatusCodes.Status400BadRequest] = "Validation failed.";
+            s.Responses[StatusCodes.Status401Unauthorized] = "API key is missing or invalid.";
             s.Responses[StatusCodes.Status409Conflict] = "Player name already exists.";
         });
     }

@@ -8,14 +8,16 @@ public sealed class Endpoint(LeaderboardStore leaderboardStore) : Endpoint<Reque
     public override void Configure()
     {
         Get("/leaderboard");
-        AllowAnonymous();
         Description(b =>
-            b.Produces<Response>(StatusCodes.Status200OK).ProducesProblemFE(StatusCodes.Status400BadRequest)
+            b.Produces<Response>(StatusCodes.Status200OK)
+                .ProducesProblemFE(StatusCodes.Status401Unauthorized)
+                .ProducesProblemFE(StatusCodes.Status400BadRequest)
         );
         Summary(s =>
         {
             s.Responses[StatusCodes.Status200OK] = "Players ranked by score (descending).";
             s.Responses[StatusCodes.Status400BadRequest] = "Invalid paging parameters.";
+            s.Responses[StatusCodes.Status401Unauthorized] = "API key is missing or invalid.";
         });
     }
 
