@@ -5,6 +5,47 @@
 * C# with .NET 10 and FastEndpoints
 * PostgreSQL for storage and battle queueing
 
+## Requirements
+
+* .NET SDK 10
+* Docker
+
+## Run
+
+Start the API, worker, and PostgreSQL:
+
+```bash
+docker compose up --build
+```
+
+The API listens on:
+
+```text
+http://localhost:8080
+```
+
+All endpoints require an API key:
+
+```http
+X-Api-Key: dev-api-key
+```
+
+Battle submission also requires an idempotency key:
+
+```http
+Idempotency-Key: 7f34d79a-9bb0-4754-b6c8-3f29dca728f5
+```
+
+## Test
+
+```bash
+dotnet build ScopelyBattles.slnx
+dotnet test tests/ScopelyBattles.UnitTests/ScopelyBattles.UnitTests.csproj
+dotnet test tests/ScopelyBattles.IntegrationTests/ScopelyBattles.IntegrationTests.csproj
+```
+
+Integration tests use Testcontainers, so Docker must be running.
+
 ## Projects
 
 * `ScopelyBattles.Api` - HTTP API
@@ -43,6 +84,8 @@ The Worker pulls queued battles and processes them in the background. For each b
 
 Battles that share a player are serialized with row-level locks. Battles that don't share a player run concurrently across worker instances.
 
+The worker processes the oldest queued battle it can lock. If an older battle shares a locked player, a later battle with different players can run first. This keeps independent battles moving while still protecting each player's resources.
+
 PostgreSQL is the source of truth because finishing a battle changes several rows that have to commit together: both players, the report, and the leaderboard score. That's a transaction, so a relational store fits. Redis would be a reasonable choice for a leaderboard or cache projection in production, but it's not worth the extra dependency for this exercise.
 
 ## Battle assumptions
@@ -61,4 +104,40 @@ GET  /battles/{id}
 POST /battles
 
 GET /leaderboard
+```
+
+## Example requests
+
+Create a player:
+
+```http
+POST /players HTTP/1.1
+Host: localhost:8080
+X-Api-Key: dev-api-key
+Content-Type: application/json
+
+{
+  "name": "alice",
+  "description": "frontline attacker",
+  "gold": 500,
+  "silver": 120,
+  "attackValue": 70,
+  "defenseValue": 25,
+  "hitPoints": 100
+}
+```
+
+Submit a battle:
+
+```http
+POST /battles HTTP/1.1
+Host: localhost:8080
+X-Api-Key: dev-api-key
+Idempotency-Key: 7f34d79a-9bb0-4754-b6c8-3f29dca728f5
+Content-Type: application/json
+
+{
+  "attackerId": 1,
+  "defenderId": 2
+}
 ```
