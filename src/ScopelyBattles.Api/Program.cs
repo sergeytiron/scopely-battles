@@ -4,6 +4,7 @@ using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication;
 using NSwag;
 using ScopelyBattles.Api.Authentication;
+using ScopelyBattles.Api.Middleware;
 using ScopelyBattles.Shared.DataAccess;
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;
@@ -40,6 +41,7 @@ builder.Services.SwaggerDocument(o =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseFastEndpoints();

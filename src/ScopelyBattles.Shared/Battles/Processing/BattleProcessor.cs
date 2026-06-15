@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Text.Json;
 using Dapper;
+using Microsoft.Extensions.Logging;
 using ScopelyBattles.Shared.DataAccess;
 using ScopelyBattles.Shared.Players;
 using BattleClaim = (
@@ -11,7 +12,11 @@ using BattleClaim = (
 
 namespace ScopelyBattles.Shared.Battles.Processing;
 
-public sealed class BattleProcessor(PostgresConnectionFactory connectionFactory, IRandomProvider random)
+public sealed class BattleProcessor(
+    PostgresConnectionFactory connectionFactory,
+    IRandomProvider random,
+    ILogger<BattleProcessor> logger
+)
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -29,18 +34,38 @@ public sealed class BattleProcessor(PostgresConnectionFactory connectionFactory,
         }
 
         var (battle, attacker, defender) = claim.Value;
+        logger.LogInformation(
+            "Processing battle {BattleId}: attacker {AttackerId}, defender {DefenderId}.",
+            battle.Id,
+            battle.AttackerId,
+            battle.DefenderId
+        );
 
         try
         {
             var outcome = battle.Simulate(attacker, defender, random);
             await CompleteBattleAsync(connection, transaction, outcome, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+            logger.LogInformation(
+                "Completed battle {BattleId}: winner {WinnerId}, loser {LoserId}, stolen {StolenResources}.",
+                outcome.Report.BattleId,
+                outcome.Report.WinnerId,
+                outcome.Report.LoserId,
+                outcome.Report.StolenResources?.Total ?? 0
+            );
             return true;
         }
         catch (BattleSimulationException exception)
         {
             await FailBattleAsync(connection, transaction, battle, exception.Message, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+            logger.LogWarning(
+                "Failed battle {BattleId}: attacker {AttackerId}, defender {DefenderId}. {Error}",
+                battle.Id,
+                battle.AttackerId,
+                battle.DefenderId,
+                exception.Message
+            );
             return true;
         }
         catch

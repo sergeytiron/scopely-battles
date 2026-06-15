@@ -7,8 +7,13 @@ public sealed class Worker(BattleProcessor processor, ILogger<Worker> logger) : 
     private static readonly TimeSpan IdleDelay = TimeSpan.FromMilliseconds(250);
     private static readonly TimeSpan ErrorDelay = TimeSpan.FromSeconds(1);
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken) =>
-        Task.WhenAll(Enumerable.Range(0, Environment.ProcessorCount).Select(_ => ProcessLoopAsync(stoppingToken)));
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        var workerCount = Environment.ProcessorCount;
+        logger.LogInformation("Battle worker is running with {WorkerCount} processing loops.", workerCount);
+
+        await Task.WhenAll(Enumerable.Range(0, workerCount).Select(_ => ProcessLoopAsync(stoppingToken)));
+    }
 
     private async Task ProcessLoopAsync(CancellationToken stoppingToken)
     {

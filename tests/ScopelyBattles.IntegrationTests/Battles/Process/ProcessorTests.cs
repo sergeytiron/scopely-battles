@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 using ScopelyBattles.IntegrationTests.Fixtures;
 using ScopelyBattles.Shared;
@@ -126,7 +127,11 @@ public sealed class ProcessorTests(ApiFixture app) : IntegrationTestBase(app)
     private BattleProcessor CreateProcessor(params int[] rolls)
     {
         var connectionFactory = App.Services.GetRequiredService<PostgresConnectionFactory>();
-        return new BattleProcessor(connectionFactory, new TestRandomProvider(rolls));
+        return new BattleProcessor(
+            connectionFactory,
+            new TestRandomProvider(rolls),
+            NullLogger<BattleProcessor>.Instance
+        );
     }
 
     private async Task<IAsyncDisposable> LockPlayerAsync(int id)
