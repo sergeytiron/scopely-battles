@@ -25,17 +25,16 @@ public sealed class Endpoint(PlayerStore playerStore) : Endpoint<Request, Respon
 
     public override async Task HandleAsync(Request request, CancellationToken cancellationToken)
     {
-        var player = new Player
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Gold = request.Gold,
-            Silver = request.Silver,
-            AttackValue = request.AttackValue,
-            DefenseValue = request.DefenseValue,
-            HitPoints = request.HitPoints,
-            Score = request.Score,
-        };
+        var player = new Player(
+            request.Name,
+            request.Description,
+            request.Gold,
+            request.Silver,
+            request.AttackValue,
+            request.DefenseValue,
+            request.HitPoints,
+            request.Score
+        );
         var result = await playerStore.CreateAsync(player, cancellationToken);
 
         if (result.IsDuplicateName)

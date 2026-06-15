@@ -41,4 +41,28 @@ public sealed class PlayerStore(PostgresConnectionFactory connectionFactory)
             return CreateResult.DuplicateName();
         }
     }
+
+    public async Task<Player?> GetAsync(int id, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            SELECT
+                id,
+                name,
+                description,
+                gold,
+                silver,
+                attack_value,
+                defense_value,
+                hit_points,
+                score
+            FROM players
+            WHERE id = @Id;
+            """;
+
+        await using var connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
+
+        return await connection.QuerySingleOrDefaultAsync<Player>(
+            new CommandDefinition(sql, new { Id = id }, cancellationToken: cancellationToken)
+        );
+    }
 }

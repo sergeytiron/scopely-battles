@@ -1,4 +1,5 @@
 using ScopelyBattles.Api.Players.Create;
+using ScopelyBattles.Shared;
 
 namespace ScopelyBattles.UnitTests.Players.Create;
 
@@ -12,7 +13,7 @@ public sealed class ValidationTests
             Name = string.Empty,
             Description = new string('x', 1001),
             Gold = -1,
-            Silver = 1_000_000_001,
+            Silver = GameRules.MaxResourceValue + 1,
             AttackValue = -1,
             DefenseValue = -1,
             HitPoints = -1,

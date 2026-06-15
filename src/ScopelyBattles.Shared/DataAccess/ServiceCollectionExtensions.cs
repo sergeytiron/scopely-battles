@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ScopelyBattles.Shared.Battles;
+using ScopelyBattles.Shared.Battles.Processing;
 using ScopelyBattles.Shared.Leaderboard;
 using ScopelyBattles.Shared.Players;
 
@@ -20,6 +21,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<PlayerStore>();
         services.AddSingleton<LeaderboardStore>();
         services.AddSingleton<BattleStore>();
+        services.AddSingleton<IRandomProvider, RandomProvider>();
+        services.AddSingleton<BattleProcessor>();
 
         return services;
     }

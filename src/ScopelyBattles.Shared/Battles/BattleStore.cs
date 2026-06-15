@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Dapper;
 using Npgsql;
 using ScopelyBattles.Shared.DataAccess;
@@ -6,6 +7,8 @@ namespace ScopelyBattles.Shared.Battles;
 
 public sealed class BattleStore(PostgresConnectionFactory connectionFactory)
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
     public async Task<CreateResult> CreateAsync(Battle battle, CancellationToken cancellationToken)
     {
         const string sql = """
@@ -43,6 +46,39 @@ public sealed class BattleStore(PostgresConnectionFactory connectionFactory)
                 ? CreateResult.Success(existingBattle)
                 : CreateResult.IdempotencyConflict();
         }
+    }
+
+    public async Task<Battle?> GetAsync(int id, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            SELECT
+                id,
+                idempotency_key,
+                attacker_id,
+                defender_id,
+                status::text
+            FROM battles
+            WHERE id = @Id;
+            """;
+
+        await using var connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
+
+        return await connection.QuerySingleOrDefaultAsync<Battle>(
+            new CommandDefinition(sql, new { Id = id }, cancellationToken: cancellationToken)
+        );
+    }
+
+    public async Task<BattleReport?> GetReportAsync(int id, CancellationToken cancellationToken)
+    {
+        const string sql = "SELECT report::text FROM battles WHERE id = @Id;";
+
+        await using var connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
+
+        var report = await connection.QuerySingleOrDefaultAsync<string?>(
+            new CommandDefinition(sql, new { Id = id }, cancellationToken: cancellationToken)
+        );
+
+        return report is null ? null : JsonSerializer.Deserialize<BattleReport>(report, JsonOptions);
     }
 
     private static async Task<Battle> GetByIdempotencyKeyAsync(

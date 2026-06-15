@@ -45,6 +45,12 @@ Battles that share a player are serialized with row-level locks. Battles that do
 
 PostgreSQL is the source of truth because finishing a battle changes several rows that have to commit together: both players, the report, and the leaderboard score. That's a transaction, so a relational store fits. Redis would be a reasonable choice for a leaderboard or cache projection in production, but it's not worth the extra dependency for this exercise.
 
+## Battle assumptions
+
+Defense is interpreted as miss chance percentage and clamped to 0-95. For example, 25 defense means a 25% chance to miss. This is an assumption because the assignment does not define the exact defense-to-miss formula.
+
+Each attack rolls a random integer from 1 to 100. If the roll is less than or equal to the defender's clamped defense value, the attack misses; otherwise it hits and deals the attacker's current attack value.
+
 ## Endpoints
 
 ```http
