@@ -90,14 +90,10 @@ public sealed record Player
 
     internal StolenResources Steal(Player loser, IRandomProvider random)
     {
-        var goldPercent = random.NextInclusive(GameRules.MinStolenResourcePercent, GameRules.MaxStolenResourcePercent);
-        var silverPercent = random.NextInclusive(
-            GameRules.MinStolenResourcePercent,
-            GameRules.MaxStolenResourcePercent
-        );
+        var stealPercent = random.NextInclusive(GameRules.MinStolenResourcePercent, GameRules.MaxStolenResourcePercent);
 
-        var gold = StolenAmount(loser.Gold, goldPercent);
-        var silver = StolenAmount(loser.Silver, silverPercent);
+        var gold = StolenAmount(loser.Gold, stealPercent);
+        var silver = StolenAmount(loser.Silver, stealPercent);
 
         loser.Gold -= gold;
         loser.Silver -= silver;
@@ -108,8 +104,7 @@ public sealed record Player
 
         return new StolenResources
         {
-            GoldPercent = goldPercent,
-            SilverPercent = silverPercent,
+            Percent = stealPercent,
             Gold = gold,
             Silver = silver,
         };

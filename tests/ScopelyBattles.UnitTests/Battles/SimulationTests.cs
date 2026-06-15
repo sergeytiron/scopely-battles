@@ -12,7 +12,7 @@ public sealed class SimulationTests
             .Simulate(
                 CreatePlayer(id: 1, hitPoints: 20, attackValue: 10),
                 CreatePlayer(id: 2, hitPoints: 20, attackValue: 10),
-                CreateRandom(100, 100, 100, 5, 5)
+                CreateRandom(100, 100, 100, 5)
             );
 
         Assert.Equal(1, outcome.Report.Turns[0].AttackerId);
@@ -29,7 +29,7 @@ public sealed class SimulationTests
             .Simulate(
                 CreatePlayer(id: 1, hitPoints: 20, attackValue: 10),
                 CreatePlayer(id: 2, hitPoints: 20, attackValue: 10, defenseValue: 25),
-                CreateRandom(18, 100, 100, 100, 5, 5)
+                CreateRandom(18, 100, 100, 100, 5)
             );
 
         Assert.True(outcome.Report.Turns[0].Missed);
@@ -55,25 +55,24 @@ public sealed class SimulationTests
     }
 
     [Fact]
-    public void Simulate_StealsRandomInclusivePercentagesAndRoundsUp()
+    public void Simulate_StealsOneRandomPercentageAndRoundsUp()
     {
         var outcome = CreateBattle(attackerId: 1, defenderId: 2)
             .Simulate(
                 CreatePlayer(id: 1, hitPoints: 10, attackValue: 100),
-                CreatePlayer(id: 2, hitPoints: 1, attackValue: 0, gold: 11, silver: 20),
-                CreateRandom(100, 5, 10)
+                CreatePlayer(id: 2, hitPoints: 1, attackValue: 1, gold: 11, silver: 20),
+                CreateRandom(100, 10)
             );
 
         Assert.NotNull(outcome.Report.StolenResources);
-        Assert.Equal(5, outcome.Report.StolenResources.GoldPercent);
-        Assert.Equal(10, outcome.Report.StolenResources.SilverPercent);
-        Assert.Equal(1, outcome.Report.StolenResources.Gold);
+        Assert.Equal(10, outcome.Report.StolenResources.Percent);
+        Assert.Equal(2, outcome.Report.StolenResources.Gold);
         Assert.Equal(2, outcome.Report.StolenResources.Silver);
-        Assert.Equal(1, outcome.Winner.Gold);
+        Assert.Equal(2, outcome.Winner.Gold);
         Assert.Equal(2, outcome.Winner.Silver);
-        Assert.Equal(10, outcome.Loser.Gold);
+        Assert.Equal(9, outcome.Loser.Gold);
         Assert.Equal(18, outcome.Loser.Silver);
-        Assert.Equal(3, outcome.Winner.Score);
+        Assert.Equal(4, outcome.Winner.Score);
     }
 
     private static TestRandomProvider CreateRandom(params int[] rolls) => new(rolls);

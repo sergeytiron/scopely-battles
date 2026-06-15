@@ -15,9 +15,9 @@ public sealed class ProcessorTests(ApiFixture app) : IntegrationTestBase(app)
     public async Task ProcessNext_CompletesBattleAndUpdatesPlayers()
     {
         var attackerId = await SeedPlayerAsync(CreatePlayer(hitPoints: 10, attackValue: 100));
-        var defenderId = await SeedPlayerAsync(CreatePlayer(hitPoints: 1, attackValue: 0, gold: 11, silver: 20));
+        var defenderId = await SeedPlayerAsync(CreatePlayer(hitPoints: 1, attackValue: 1, gold: 11, silver: 20));
         var battle = await SubmitBattleAsync(attackerId, defenderId);
-        var processor = CreateProcessor(100, 5, 10);
+        var processor = CreateProcessor(100, 10);
 
         var processedBattle = await processor.ProcessNextAsync(TestContext.Current.CancellationToken);
 
@@ -32,10 +32,10 @@ public sealed class ProcessorTests(ApiFixture app) : IntegrationTestBase(app)
         Assert.NotNull(report);
         Assert.Equal(attackerId, report.WinnerId);
         Assert.Equal(defenderId, report.LoserId);
-        Assert.Equal(1, attacker.Gold);
+        Assert.Equal(2, attacker.Gold);
         Assert.Equal(2, attacker.Silver);
-        Assert.Equal(3, attacker.Score);
-        Assert.Equal(10, defender.Gold);
+        Assert.Equal(4, attacker.Score);
+        Assert.Equal(9, defender.Gold);
         Assert.Equal(18, defender.Silver);
     }
 
@@ -43,9 +43,9 @@ public sealed class ProcessorTests(ApiFixture app) : IntegrationTestBase(app)
     public async Task ProcessNext_DoesNotApplyCompletedBattleMoreThanOnce()
     {
         var attackerId = await SeedPlayerAsync(CreatePlayer(hitPoints: 10, attackValue: 100));
-        var defenderId = await SeedPlayerAsync(CreatePlayer(hitPoints: 1, attackValue: 0, gold: 11, silver: 20));
+        var defenderId = await SeedPlayerAsync(CreatePlayer(hitPoints: 1, attackValue: 1, gold: 11, silver: 20));
         await SubmitBattleAsync(attackerId, defenderId);
-        var processor = CreateProcessor(100, 5, 10);
+        var processor = CreateProcessor(100, 10);
 
         Assert.True(await processor.ProcessNextAsync(TestContext.Current.CancellationToken));
         Assert.False(await processor.ProcessNextAsync(TestContext.Current.CancellationToken));
@@ -53,10 +53,10 @@ public sealed class ProcessorTests(ApiFixture app) : IntegrationTestBase(app)
         var attacker = await GetPlayerAsync(attackerId);
         var defender = await GetPlayerAsync(defenderId);
 
-        Assert.Equal(1, attacker.Gold);
+        Assert.Equal(2, attacker.Gold);
         Assert.Equal(2, attacker.Silver);
-        Assert.Equal(3, attacker.Score);
-        Assert.Equal(10, defender.Gold);
+        Assert.Equal(4, attacker.Score);
+        Assert.Equal(9, defender.Gold);
         Assert.Equal(18, defender.Silver);
     }
 
