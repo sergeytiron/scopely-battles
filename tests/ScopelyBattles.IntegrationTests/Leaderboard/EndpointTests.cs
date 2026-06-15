@@ -14,7 +14,7 @@ public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
         await SeedPlayersAsync(expectedScores);
 
         var leaderboard = await GetLeaderboardAsync();
-        var actualScores = leaderboard.Entries.Select(entry => entry.Score).ToArray();
+        var actualScores = leaderboard.Select(entry => entry.Score).ToArray();
 
         Assert.Equal(expectedScores, actualScores);
     }
@@ -27,14 +27,14 @@ public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
         var fullBoard = await GetLeaderboardAsync();
         var secondRowPage = await GetLeaderboardAsync(limit: 1, offset: 1);
 
-        var secondRow = Assert.Single(secondRowPage.Entries);
+        var secondRow = Assert.Single(secondRowPage);
         Assert.Equal(2, secondRow.Rank);
-        Assert.Equal(fullBoard.Entries[1].Id, secondRow.Id);
+        Assert.Equal(fullBoard[1].Id, secondRow.Id);
     }
 
-    private async Task<Response> GetLeaderboardAsync(int limit = 100, int offset = 0)
+    private async Task<IReadOnlyList<Response>> GetLeaderboardAsync(int limit = 100, int offset = 0)
     {
-        var response = await App.Client.GETAsync<Endpoint, Request, Response>(
+        var response = await App.Client.GETAsync<Endpoint, Request, IReadOnlyList<Response>>(
             new Request { Limit = limit, Offset = offset }
         );
 

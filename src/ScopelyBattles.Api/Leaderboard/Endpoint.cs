@@ -3,13 +3,13 @@ using ScopelyBattles.Shared.Leaderboard;
 
 namespace ScopelyBattles.Api.Leaderboard;
 
-public sealed class Endpoint(LeaderboardStore leaderboardStore) : Endpoint<Request, Response>
+public sealed class Endpoint(LeaderboardStore leaderboardStore) : Endpoint<Request, IReadOnlyList<Response>>
 {
     public override void Configure()
     {
         Get("/leaderboard");
         Description(b =>
-            b.Produces<Response>(StatusCodes.Status200OK)
+            b.Produces<IReadOnlyList<Response>>(StatusCodes.Status200OK)
                 .ProducesProblemFE(StatusCodes.Status401Unauthorized)
                 .ProducesProblemFE(StatusCodes.Status400BadRequest)
         );
@@ -25,6 +25,10 @@ public sealed class Endpoint(LeaderboardStore leaderboardStore) : Endpoint<Reque
     {
         var rows = await leaderboardStore.GetLeaderboardAsync(request.Limit, request.Offset, cancellationToken);
 
-        await Send.ResponseAsync(Response.From(rows, request.Offset), StatusCodes.Status200OK, cancellationToken);
+        await Send.ResponseAsync(
+            Leaderboard.Response.From(rows, request.Offset),
+            StatusCodes.Status200OK,
+            cancellationToken
+        );
     }
 }
