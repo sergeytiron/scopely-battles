@@ -10,7 +10,7 @@ public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
     [Fact]
     public async Task GetLeaderboard_RanksPlayersByScoreDescending()
     {
-        int[] expectedScores = [3, 2, 1];
+        long[] expectedScores = [3, 2, 1];
         await SeedPlayersAsync(expectedScores);
 
         var leaderboard = await GetLeaderboardAsync();

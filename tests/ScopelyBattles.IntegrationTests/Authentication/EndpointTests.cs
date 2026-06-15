@@ -57,7 +57,6 @@ public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
             AttackValue = 10,
             DefenseValue = 12,
             HitPoints = 50,
-            Score = 500,
         };
 
     private static CreateBattleRequest CreateBattleRequest() =>

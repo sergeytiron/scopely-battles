@@ -12,7 +12,7 @@ public sealed record Response
     public required int AttackValue { get; init; }
     public required int DefenseValue { get; init; }
     public required int HitPoints { get; init; }
-    public required int Score { get; init; }
+    public required long Score { get; init; }
 
     public static Response FromPlayer(Player player) =>
         new()

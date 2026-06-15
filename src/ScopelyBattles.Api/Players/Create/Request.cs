@@ -9,5 +9,4 @@ public sealed record Request
     public int AttackValue { get; init; }
     public int DefenseValue { get; init; }
     public int HitPoints { get; init; }
-    public int Score { get; init; }
 }

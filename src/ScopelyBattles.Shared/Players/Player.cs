@@ -19,7 +19,7 @@ public sealed record Player
         int attackValue,
         int defenseValue,
         int hitPoints,
-        int score
+        long score
     )
     {
         Name = name;
@@ -52,7 +52,7 @@ public sealed record Player
     public int DefenseValue { get; internal set; }
     public required int HitPoints { get; init; }
 
-    public int Score
+    public long Score
     {
         get;
         internal set => field = WithinBounds(value, GameRules.MaxScore, nameof(Score));
@@ -134,6 +134,18 @@ public sealed record Player
     private static int StolenAmount(int balance, int percent) => (int)Math.Ceiling((decimal)balance * percent / 100);
 
     private int WithinBounds(int value, int max, string resourceName)
+    {
+        if (value < 0 || value > max)
+        {
+            throw new BattleSimulationException(
+                $"Player {Id} {resourceName.ToLowerInvariant()} must be between 0 and {max}."
+            );
+        }
+
+        return value;
+    }
+
+    private long WithinBounds(long value, long max, string resourceName)
     {
         if (value < 0 || value > max)
         {

@@ -4,7 +4,7 @@ public static class GameRules
 {
     public const int MaxBattleTurns = 10_000;
     public const int MaxResourceValue = 1_000_000_000;
-    public const int MaxScore = int.MaxValue;
+    public const long MaxScore = long.MaxValue;
     public const int MinAttackRoll = 1;
     public const int MaxAttackRoll = 100;
     public const int MinDefenseMissChance = 0;

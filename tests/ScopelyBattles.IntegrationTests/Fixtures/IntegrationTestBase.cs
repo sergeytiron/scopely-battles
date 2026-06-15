@@ -26,10 +26,10 @@ public abstract class IntegrationTestBase(ApiFixture app) : TestBase, IAsyncLife
         int defenseValue = 0,
         int gold = 0,
         int silver = 0,
-        int score = 0
+        long score = 0
     ) => new($"player-{Guid.NewGuid():N}"[..20], "test", gold, silver, attackValue, defenseValue, hitPoints, score);
 
-    protected async Task<int> SeedPlayerAsync(int score = 0) => await SeedPlayerAsync(CreatePlayer(score: score));
+    protected async Task<int> SeedPlayerAsync(long score = 0) => await SeedPlayerAsync(CreatePlayer(score: score));
 
     protected async Task<int> SeedPlayerAsync(Player player)
     {
@@ -40,7 +40,7 @@ public abstract class IntegrationTestBase(ApiFixture app) : TestBase, IAsyncLife
         return result.Player.Id;
     }
 
-    protected async Task SeedPlayersAsync(params int[] scores)
+    protected async Task SeedPlayersAsync(params long[] scores)
     {
         foreach (var score in scores)
         {

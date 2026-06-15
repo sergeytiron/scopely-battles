@@ -17,7 +17,6 @@ public sealed class ValidationTests
             AttackValue = -1,
             DefenseValue = -1,
             HitPoints = -1,
-            Score = -1,
         };
 
         var result = new Validator().Validate(request);
@@ -30,7 +29,6 @@ public sealed class ValidationTests
         Assert.Contains(result.Errors, error => error.PropertyName == nameof(Request.AttackValue));
         Assert.Contains(result.Errors, error => error.PropertyName == nameof(Request.DefenseValue));
         Assert.Contains(result.Errors, error => error.PropertyName == nameof(Request.HitPoints));
-        Assert.Contains(result.Errors, error => error.PropertyName == nameof(Request.Score));
     }
 
     [Fact]
@@ -45,7 +43,6 @@ public sealed class ValidationTests
             AttackValue = 10,
             DefenseValue = 12,
             HitPoints = 50,
-            Score = 500,
         };
 
         var result = new Validator().Validate(request);

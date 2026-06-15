@@ -2,7 +2,7 @@ using ScopelyBattles.Shared.Battles.Processing;
 
 namespace ScopelyBattles.Worker;
 
-public sealed class Worker(BattleProcessor processor) : BackgroundService
+public sealed class Worker(BattleProcessor processor, ILogger<Worker> logger) : BackgroundService
 {
     private static readonly TimeSpan IdleDelay = TimeSpan.FromMilliseconds(250);
     private static readonly TimeSpan ErrorDelay = TimeSpan.FromSeconds(1);
@@ -27,8 +27,9 @@ public sealed class Worker(BattleProcessor processor) : BackgroundService
             {
                 return;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError(ex, "Worker processing loop failed.");
                 await Task.Delay(ErrorDelay, stoppingToken);
             }
         }

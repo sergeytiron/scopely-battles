@@ -94,8 +94,8 @@ public sealed class SimulationTests
         int defenseValue = 0,
         int gold = 0,
         int silver = 0,
-        int score = 0
-    ) => new Player($"player-{id}", "test", gold, silver, attackValue, defenseValue, hitPoints, score) { Id = id };
+        long score = 0
+    ) => new($"player-{id}", "test", gold, silver, attackValue, defenseValue, hitPoints, score) { Id = id };
 
     private sealed class TestRandomProvider(IEnumerable<int> rolls) : IRandomProvider
     {

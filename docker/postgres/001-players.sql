@@ -8,7 +8,7 @@ CREATE TABLE players
     attack_value integer NOT NULL DEFAULT 0,
     defense_value integer NOT NULL DEFAULT 0,
     hit_points integer NOT NULL,
-    score integer NOT NULL DEFAULT 0,
+    score bigint NOT NULL DEFAULT 0,
     CONSTRAINT uq_players_name UNIQUE (name),
     CONSTRAINT ck_players_gold_non_negative CHECK (gold >= 0),
     CONSTRAINT ck_players_gold_max CHECK (gold <= 1000000000),

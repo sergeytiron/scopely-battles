@@ -33,7 +33,7 @@ public sealed class Endpoint(PlayerStore playerStore) : Endpoint<Request, Respon
             request.AttackValue,
             request.DefenseValue,
             request.HitPoints,
-            request.Score
+            0
         );
         var result = await playerStore.CreateAsync(player, cancellationToken);
 

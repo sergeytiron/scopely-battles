@@ -21,7 +21,6 @@ public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
             AttackValue = 10,
             DefenseValue = 12,
             HitPoints = 50,
-            Score = 500,
         };
 
         var response = await App.Client.POSTAsync<Endpoint, Request, Response>(request);
@@ -39,7 +38,7 @@ public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
         Assert.Equal(request.AttackValue, body.AttackValue);
         Assert.Equal(request.DefenseValue, body.DefenseValue);
         Assert.Equal(request.HitPoints, body.HitPoints);
-        Assert.Equal(request.Score, body.Score);
+        Assert.Equal(0, body.Score);
     }
 
     [Fact]
@@ -56,7 +55,6 @@ public sealed class EndpointTests(ApiFixture app) : ApiTestBase(app)
             AttackValue = 10,
             DefenseValue = 12,
             HitPoints = 50,
-            Score = 500,
         };
 
         await App.Client.POSTAsync<Endpoint, Request, Response>(request);

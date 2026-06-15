@@ -11,7 +11,7 @@ public sealed record Response
         public required int Rank { get; init; }
         public required int Id { get; init; }
         public required string Name { get; init; }
-        public required int Score { get; init; }
+        public required long Score { get; init; }
     }
 
     public static Response From(IReadOnlyList<LeaderboardEntry> rows, int offset) =>
